@@ -15,16 +15,18 @@ class TodoItem extends Component {
   }
 
   handleSave(id, text) {
+    const { deleteTodoAndSync, editTodo } = this.props;
+
     if (text.length === 0) {
-      this.props.deleteTodo(id)
+      deleteTodoAndSync(id);
     } else {
-      this.props.editTodo(id, text)
+      editTodo(id, text);
     }
     this.setState({ editing: false })
   }
 
   render() {
-    const { todo, completeTodo, deleteTodo } = this.props
+    const { todo, completeTodo, deleteTodoAndSync } = this.props
 
     let element
     if (this.state.editing) {
@@ -44,7 +46,7 @@ class TodoItem extends Component {
             {todo.text}
           </label>
           <button className="destroy"
-                  onClick={() => deleteTodo(todo._id)} />
+                  onClick={() => deleteTodoAndSync(todo._id)} />
         </div>
       )
     }
@@ -63,7 +65,7 @@ class TodoItem extends Component {
 TodoItem.propTypes = {
   todo: PropTypes.object.isRequired,
   editTodo: PropTypes.func.isRequired,
-  deleteTodo: PropTypes.func.isRequired,
+  deleteTodoAndSync: PropTypes.func.isRequired,
   completeTodo: PropTypes.func.isRequired
 }
 

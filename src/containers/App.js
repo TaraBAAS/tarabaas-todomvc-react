@@ -15,7 +15,7 @@ class App extends Component {
     const {todos, actions} = this.props
     return (
       <div>
-        <Header createTodo={actions.createTodoAndFetchTodos} />
+        <Header createTodo={actions.createTodoAndSync} />
         <MainSection todos={todos} actions={actions} />
       </div>
     )

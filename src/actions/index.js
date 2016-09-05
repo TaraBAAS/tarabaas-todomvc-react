@@ -1,10 +1,7 @@
 import fetch from 'isomorphic-fetch';
 
 import * as types from '../constants/ActionTypes';
-
-const BASE_URL = 'https://tarabaas.com/api/clients/projects';
-const PROJECT_ID = 'd64f6ab3-8654-4e82-b630-557b3393daf5';
-const PROJECT_URL = `${BASE_URL}/${PROJECT_ID}/databases`;
+import {PROJECT_URL} from '../settings';
 
 function dispatchRequest (url, params) {
   return (request, response, failure) => {
@@ -34,7 +31,6 @@ export function fetchTodos () {
       type: types.FETCH_TODOS_FAILURE
     };
   };
-
   return dispatchRequest(`${PROJECT_URL}/todos`)(request, success, failure);
 };
 
@@ -62,11 +58,12 @@ export function createTodo (text) {
   })(request, success, failure);
 };
 
-export function createTodoAndFetchTodos (text) {
-  return (dispatch, getState) => {
-    return dispatch(createTodo(text)).then(() => {
-      dispatch(fetchTodos());
-    });
+export function createTodoAndSync (text) {
+  return (dispatch) => {
+    return dispatch(createTodo(text))
+      .then(() => {
+        dispatch(fetchTodos());
+      });
   };
 };
 
@@ -90,11 +87,17 @@ export function deleteTodo (id) {
   return dispatchRequest(`${PROJECT_URL}/todos/${id}/`, {
     method: 'DELETE',
     mode: 'cors'
-    // headers: {
-    //   'Access-Control-Allow-Methods': 'POST,DELETE'
-    // }
   })(request, success, failure);
 };
+
+export function deleteTodoAndSync (id) {
+  return (dispatch) => {
+    return dispatch(deleteTodo(id))
+      .then(() => {
+        dispatch(fetchTodos());
+      });
+  };
+}
 
 export function completeTodo (id) {};
 
