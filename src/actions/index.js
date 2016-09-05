@@ -4,11 +4,12 @@ import * as types from '../constants/ActionTypes';
 import {PROJECT_URL} from '../settings';
 
 function dispatchRequest (url, params) {
-  return (request, response, failure) => {
+  return (request, success, failure) => {
     return (dispatch) => {
+      dispatch(request());
       return (!!params ? fetch(url, params) : fetch(url))
         .then(r => r.json())
-        .then(json => dispatch(response(json)))
+        .then(json => dispatch(success(json)))
         .catch(failure);
     };
   };
@@ -53,8 +54,7 @@ export const createTodo = fetchAfter(text => {
   };
   const success = (json) => {
     return {
-      type: types.CREATE_TODO_SUCCESS,
-      todo: {}
+      type: types.CREATE_TODO_SUCCESS
     };
   };
   const failure = () => {
@@ -99,7 +99,6 @@ export const completeTodo = fetchAfter(todo => {
     };
   };
   const success = (json) => {
-    console.log(json);
     return {
       type: types.COMPLETE_TODO_SUCCESS
     };
@@ -126,7 +125,6 @@ export const editTodo = fetchAfter((id, text) => {
     };
   };
   const success = (json) => {
-    console.log(json);
     return {
       type: types.EDIT_TODO_SUCCESS
     };

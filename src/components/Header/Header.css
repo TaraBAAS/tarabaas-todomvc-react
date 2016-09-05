@@ -1,0 +1,17 @@
+.loader {
+  animation: loader-spin infinite 1s linear;
+  height: 65px;
+	width: 65px;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+
+@keyframes loader-spin {
+  from {
+		transform: rotate(0deg);
+	}
+  to {
+		transform: rotate(360deg);
+	}
+}

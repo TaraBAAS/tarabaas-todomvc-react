@@ -12,13 +12,13 @@ class App extends Component {
   }
 
   render() {
-    const { todos, actions } = this.props
+    const { todos, actions, isLoading } = this.props
     const { createTodo } = actions;
 
     return (
       <div>
-        <Header createTodo={createTodo} />
-        <MainSection todos={todos} actions={actions} />
+        <Header createTodo={createTodo} isLoading={isLoading} />
+        <MainSection todos={todos} isLoading={isLoading} actions={actions} />
       </div>
     )
   }
@@ -26,7 +26,8 @@ class App extends Component {
 
 App.propTypes = {
   todos: PropTypes.array.isRequired,
-  actions: PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired,
+  isLoading: PropTypes.bool.isRequired
 }
 
 function mapStateToProps (state) {
