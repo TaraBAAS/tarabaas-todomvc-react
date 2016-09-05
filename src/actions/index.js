@@ -3,18 +3,6 @@ import fetch from 'isomorphic-fetch';
 import * as types from '../constants/ActionTypes';
 import {PROJECT_URL} from '../settings';
 
-function dispatchRequest (url, params) {
-  return (request, success, failure) => {
-    return (dispatch) => {
-      dispatch(request());
-      return (!!params ? fetch(url, params) : fetch(url))
-        .then(r => r.json())
-        .then(json => dispatch(success(json)))
-        .catch(failure);
-    };
-  };
-};
-
 export function fetchAll () {
   const request = () => {
     return {
@@ -27,12 +15,19 @@ export function fetchAll () {
       items: json
     }
   };
-  const failure = (err) => {
+  const failure = (error) => {
     return {
+      error,
       type: types.FETCH_TODOS_FAILURE
     };
   };
-  return dispatchRequest(`${PROJECT_URL}/todos`)(request, success, failure);
+  return (dispatch) => {
+    dispatch(request());
+    return fetch(`${PROJECT_URL}/todos`)
+      .then(r => r.json())
+      .then(json => dispatch(success(json)))
+      .catch(error => dispatch(failure(error)));
+  };
 };
 
 function fetchAfter (f) {
@@ -57,16 +52,23 @@ export const createTodo = fetchAfter(text => {
       type: types.CREATE_TODO_SUCCESS
     };
   };
-  const failure = () => {
+  const failure = (error) => {
     return {
+      error,
       type: types.CREATE_TODO_FAILURE
     };
   };
 
-  return dispatchRequest(`${PROJECT_URL}/todos`, {
-    method: 'POST',
-    body: JSON.stringify({text})
-  })(request, success, failure);
+  return (dispatch) => {
+    dispatch(request());
+    return fetch(`${PROJECT_URL}/todos`, {
+        method: 'POST',
+        body: JSON.stringify({text})
+      })
+      .then(r => r.json())
+      .then(json => dispatch(success(json)))
+      .catch(error => dispatch(failure(error)));
+  };
 });
 
 export const deleteTodo = fetchAfter(id => {
@@ -75,26 +77,34 @@ export const deleteTodo = fetchAfter(id => {
       type: types.DELETE_TODO
     };
   };
-  const success = (json) => {
+  const success = () => {
     return {
       type: types.DELETE_TODO_SUCCESS
     };
   };
-  const failure = () => {
+  const failure = (error) => {
     return {
+      error,
       type: types.DELETE_TODO_FAILURE
     };
   };
 
-  return dispatchRequest(`${PROJECT_URL}/todos/${id}/`, {
-    method: 'DELETE',
-    mode: 'cors'
-  })(request, success, failure);
+  return (dispatch) => {
+    dispatch(request());
+    return fetch(`${PROJECT_URL}/todos/${id}/`, {
+        method: 'DELETE',
+        mode: 'cors'
+      })
+      .then(() => dispatch(success()))
+      .catch(error => dispatch(failure(error)));
+  };
 });
 
-export const completeTodo = fetchAfter(todo => {
+export const completeTodo = fetchAfter((id, completed) => {
   const request = () => {
     return {
+      id,
+      completed,
       type: types.COMPLETE_TODO
     };
   };
@@ -103,53 +113,56 @@ export const completeTodo = fetchAfter(todo => {
       type: types.COMPLETE_TODO_SUCCESS
     };
   };
-  const failure = () => {
+  const failure = (error) => {
     return {
+      error,
       type: types.COMPLETE_TODO_FAILURE
     };
   };
 
-  return dispatchRequest(`${PROJECT_URL}/todos/${todo._id}/`, {
-    method: 'PUT',
-    mode: 'cors',
-    body: JSON.stringify({
-      completed: !todo.completed
-    })
-  })(request, success, failure);
+  return (dispatch) => {
+    dispatch(request());
+    return fetch(`${PROJECT_URL}/todos/${id}/`, {
+        method: 'PUT',
+        mode: 'cors',
+        body: JSON.stringify({completed})
+      })
+      .then(r => r.json())
+      .then(json => dispatch(success(json)))
+      .catch(error => dispatch(failure(error)));
+  };
 });
 
 export const editTodo = fetchAfter((id, text) => {
   const request = () => {
     return {
+      id,
+      text,
       type: types.EDIT_TODO
     };
   };
   const success = (json) => {
     return {
-      type: types.EDIT_TODO_SUCCESS
+      type: types.EDIT_TODO_SUCCESS,
+      todo: json
     };
   };
-  const failure = () => {
+  const failure = (error) => {
     return {
+      error,
       type: types.EDIT_TODO_FAILURE
     };
   };
 
-  return dispatchRequest(`${PROJECT_URL}/todos/${id}/`, {
-    method: 'PUT',
-    mode: 'cors',
-    body: JSON.stringify({text})
-  })(request, success, failure);
+  return (dispatch) => {
+    dispatch(request());
+    return fetch(`${PROJECT_URL}/todos/${id}/`, {
+        method: 'PUT',
+        mode: 'cors',
+        body: JSON.stringify({text})
+      })
+      .then(r => r.json())
+      .then(json => dispatch(success(json)))
+      .catch(error => dispatch(failure(error)));
+  };
 });
-
-// export function completeAll () {
-//   return {
-//     type: types.COMPLETE_ALL
-//   }
-// }
-//
-// export function clearCompleted () {
-//   return {
-//     type: types.CLEAR_COMPLETED
-//   }
-// }

@@ -14,10 +14,32 @@ export default function todos (state = {
     case FETCH_TODOS:
     case CREATE_TODO:
     case DELETE_TODO:
+      return {
+        ...state,
+        isLoading: true
+      };
+
     case COMPLETE_TODO:
+      return {
+        ...state,
+        items: state.items.map(todo => {
+          return todo._id === action.id ? {
+            ...todo,
+            completed: action.completed
+          } : todo;
+        }),
+        isLoading: true
+      };
+
     case EDIT_TODO:
       return {
         ...state,
+        items: state.items.map(todo => {
+          return todo._id === action.id ? {
+            ...todo,
+            text: action.text
+          } : todo;
+        }),
         isLoading: true
       };
 
@@ -42,15 +64,11 @@ export default function todos (state = {
     case DELETE_TODO_SUCCESS:
     case COMPLETE_TODO_SUCCESS:
     case EDIT_TODO_SUCCESS:
-      return state;
+      return {
+        ...state,
+        isLoading: false
+      };
 
-    // case EDIT_TODO:
-    //   return state.map(todo =>
-    //     todo.id === action.id ?
-    //       { ...todo, text: action.text } :
-    //       todo
-    //   )
-    //
     // case COMPLETE_TODO:
     //   return state.map(todo =>
     //     todo.id === action.id ?
