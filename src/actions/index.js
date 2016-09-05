@@ -14,7 +14,7 @@ function dispatchRequest (url, params) {
   };
 };
 
-export function fetchTodos () {
+export function fetchAll () {
   const request = () => {
     return {
       type: types.FETCH_TODOS
@@ -34,7 +34,18 @@ export function fetchTodos () {
   return dispatchRequest(`${PROJECT_URL}/todos`)(request, success, failure);
 };
 
-export function createTodo (text) {
+function fetchAfter (f) {
+  return (...args) => {
+    return (dispatch) => {
+      return dispatch(f(...args))
+        .then(() => {
+          dispatch(fetchAll());
+        });
+    };
+  }
+}
+
+export const createTodo = fetchAfter(text => {
   const request = () => {
     return {
       type: types.CREATE_TODO
@@ -56,18 +67,9 @@ export function createTodo (text) {
     method: 'POST',
     body: JSON.stringify({text})
   })(request, success, failure);
-};
+});
 
-export function createTodoAndSync (text) {
-  return (dispatch) => {
-    return dispatch(createTodo(text))
-      .then(() => {
-        dispatch(fetchTodos());
-      });
-  };
-};
-
-export function deleteTodo (id) {
+export const deleteTodo = fetchAfter(id => {
   const request = () => {
     return {
       type: types.DELETE_TODO
@@ -88,18 +90,36 @@ export function deleteTodo (id) {
     method: 'DELETE',
     mode: 'cors'
   })(request, success, failure);
-};
+});
 
-export function deleteTodoAndSync (id) {
-  return (dispatch) => {
-    return dispatch(deleteTodo(id))
-      .then(() => {
-        dispatch(fetchTodos());
-      });
+export const completeTodo = fetchAfter(todo => {
+  const request = () => {
+    return {
+      type: types.COMPLETE_TODO
+    };
   };
-}
+  const success = (json) => {
+    console.log(json);
+    return {
+      type: types.COMPLETE_TODO_SUCCESS
+    };
+  };
+  const failure = () => {
+    return {
+      type: types.DELETE_TODO_FAILURE
+    };
+  };
 
-export function completeTodo (id) {};
+  return dispatchRequest(`${PROJECT_URL}/todos/${todo._id}/`, {
+    method: 'PUT',
+    mode: 'cors',
+    body: JSON.stringify({
+      completed: !todo.completed
+    })
+  })(request, success, failure);
+});
+
+export function completeTodoAndSync (id) {};
 
 export function editTodo (id, text) {};
 

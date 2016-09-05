@@ -15,10 +15,10 @@ class TodoItem extends Component {
   }
 
   handleSave(id, text) {
-    const { deleteTodoAndSync, editTodo } = this.props;
+    const { deleteTodo, editTodo } = this.props;
 
     if (text.length === 0) {
-      deleteTodoAndSync(id);
+      deleteTodo(id);
     } else {
       editTodo(id, text);
     }
@@ -26,7 +26,7 @@ class TodoItem extends Component {
   }
 
   render() {
-    const { todo, completeTodo, deleteTodoAndSync } = this.props
+    const { todo, completeTodo, deleteTodo } = this.props
 
     let element
     if (this.state.editing) {
@@ -41,12 +41,12 @@ class TodoItem extends Component {
           <input className="toggle"
                  type="checkbox"
                  checked={todo.completed}
-                 onChange={() => completeTodo(todo._id)} />
+                 onChange={() => completeTodo(todo)} />
           <label onDoubleClick={this.handleDoubleClick.bind(this)}>
             {todo.text}
           </label>
           <button className="destroy"
-                  onClick={() => deleteTodoAndSync(todo._id)} />
+                  onClick={() => deleteTodo(todo._id)} />
         </div>
       )
     }
@@ -65,7 +65,7 @@ class TodoItem extends Component {
 TodoItem.propTypes = {
   todo: PropTypes.object.isRequired,
   editTodo: PropTypes.func.isRequired,
-  deleteTodoAndSync: PropTypes.func.isRequired,
+  deleteTodo: PropTypes.func.isRequired,
   completeTodo: PropTypes.func.isRequired
 }
 

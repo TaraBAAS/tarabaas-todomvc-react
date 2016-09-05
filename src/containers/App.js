@@ -7,15 +7,17 @@ import * as TodoActions from '../actions'
 
 class App extends Component {
   componentDidMount() {
-    let {fetchTodos} = this.props.actions;
-    fetchTodos();
+    let {fetchAll} = this.props.actions;
+    fetchAll();
   }
 
   render() {
-    const {todos, actions} = this.props
+    const { todos, actions } = this.props
+    const { createTodo } = actions;
+
     return (
       <div>
-        <Header createTodo={actions.createTodoAndSync} />
+        <Header createTodo={createTodo} />
         <MainSection todos={todos} actions={actions} />
       </div>
     )
