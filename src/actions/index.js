@@ -106,7 +106,7 @@ export const completeTodo = fetchAfter(todo => {
   };
   const failure = () => {
     return {
-      type: types.DELETE_TODO_FAILURE
+      type: types.COMPLETE_TODO_FAILURE
     };
   };
 
@@ -119,9 +119,30 @@ export const completeTodo = fetchAfter(todo => {
   })(request, success, failure);
 });
 
-export function completeTodoAndSync (id) {};
+export const editTodo = fetchAfter((id, text) => {
+  const request = () => {
+    return {
+      type: types.EDIT_TODO
+    };
+  };
+  const success = (json) => {
+    console.log(json);
+    return {
+      type: types.EDIT_TODO_SUCCESS
+    };
+  };
+  const failure = () => {
+    return {
+      type: types.EDIT_TODO_FAILURE
+    };
+  };
 
-export function editTodo (id, text) {};
+  return dispatchRequest(`${PROJECT_URL}/todos/${id}/`, {
+    method: 'PUT',
+    mode: 'cors',
+    body: JSON.stringify({text})
+  })(request, success, failure);
+});
 
 // export function addTodo (text) {
 //   return {

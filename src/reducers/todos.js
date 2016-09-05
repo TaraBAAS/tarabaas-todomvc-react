@@ -2,7 +2,8 @@ import {
   FETCH_TODOS, FETCH_TODOS_SUCCESS, FETCH_TODOS_FAILURE,
   CREATE_TODO, CREATE_TODO_SUCCESS, CREATE_TODO_FAILURE,
   DELETE_TODO, DELETE_TODO_SUCCESS, DELETE_TODO_FAILURE,
-  COMPLETE_TODO, COMPLETE_TODO_SUCCESS, COMPLETE_TODO_FAILURE
+  COMPLETE_TODO, COMPLETE_TODO_SUCCESS, COMPLETE_TODO_FAILURE,
+  EDIT_TODO, EDIT_TODO_SUCCESS, EDIT_TODO_FAILURE
 } from '../constants/ActionTypes'
 
 export default function todos (state = {
@@ -14,6 +15,7 @@ export default function todos (state = {
     case CREATE_TODO:
     case DELETE_TODO:
     case COMPLETE_TODO:
+    case EDIT_TODO:
       return {
         ...state,
         isLoading: true
@@ -23,6 +25,7 @@ export default function todos (state = {
     case CREATE_TODO_FAILURE:
     case DELETE_TODO_FAILURE:
     case COMPLETE_TODO_FAILURE:
+    case EDIT_TODO_FAILURE:
       return {
         ...state,
         isLoading: false
@@ -36,12 +39,9 @@ export default function todos (state = {
       };
 
     case CREATE_TODO_SUCCESS:
-      return state;
-
     case DELETE_TODO_SUCCESS:
-      return state;
-
     case COMPLETE_TODO_SUCCESS:
+    case EDIT_TODO_SUCCESS:
       return state;
 
     // case EDIT_TODO:
