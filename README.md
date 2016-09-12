@@ -5,15 +5,15 @@
 
 ## Запуск
 
-- `npm start`
+  `npm start`
 
 ## Получить сборку и отдельно её запустить
 
-- `npm run build`
-- `cd build`
-- `python -m SimpleHTTPServer`
+  `npm run build`
+  `cd build`
+  `python -m SimpleHTTPServer`
 
 ## Ещё
 
-- `npm run eject`
+  `npm run eject`
 
