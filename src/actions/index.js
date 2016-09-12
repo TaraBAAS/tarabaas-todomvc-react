@@ -41,7 +41,7 @@ export function init () {
       return api
         .projects()
         .create({
-          name: `Todos-${Date.now()}`
+          name: `Todos${Date.now()}`
         })
         .commit()
     })
