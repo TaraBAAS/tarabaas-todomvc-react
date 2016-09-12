@@ -1,7 +1,7 @@
 # Tarabaas TodoMVC react
 
 ## Зависимости
-  `$ npm install git+ssh://git@github.com:ChillyBwoy/tarabaas-js.git`
+  `$ npm install https://github.com/TaraBAAS/tarabaas-js`
 
 ## Команды
 
