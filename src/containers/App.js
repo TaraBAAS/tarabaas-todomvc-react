@@ -7,8 +7,8 @@ import * as TodoActions from '../actions'
 
 class App extends Component {
   componentDidMount() {
-    let {fetchAll} = this.props.actions;
-    fetchAll();
+    let { init } = this.props.actions;
+    init();
   }
 
   render() {

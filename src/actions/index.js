@@ -1,7 +1,91 @@
 import fetch from 'isomorphic-fetch';
+import * as tarabaas from 'tarabaas-js';
 
 import * as types from '../constants/ActionTypes';
-import {PROJECT_URL} from '../settings';
+import { LS_PROJECT_ID_KEY } from '../constants/common';
+
+export const BASE_URL = 'https://tarabaas.com/api/clients/projects';
+
+function getProjectUrl () {
+  let projectId = window.localStorage.getItem(LS_PROJECT_ID_KEY);
+  return `${BASE_URL}/${projectId}/databases`;
+}
+
+const api = tarabaas.init({
+  serverURL: 'https://tarabaas.com'
+});
+
+export function init () {
+
+  return (dispatch) => {
+    dispatch({type: types.INIT});
+
+    return new Promise((resolve, reject) => {
+      // проверям установлен ли project uuid
+      let projectId = window.localStorage.getItem(LS_PROJECT_ID_KEY);
+      if (projectId) {
+        resolve(projectId)
+      } else {
+        reject();
+      }
+    })
+    .then(projectId => {
+      //  ключ есть, проверям есть ли проект с таким ключом
+      return api
+        .projects()
+        .get(projectId)
+        .commit();
+    })
+    .catch((err) => {
+      // проекта нет, или ошибка, значит создаём его
+      return api
+        .projects()
+        .create({
+          name: `Todos-${Date.now()}`
+        })
+        .commit()
+    })
+    .then(json => {
+      // создали проект и сохранили его uuid
+      window.localStorage.setItem(LS_PROJECT_ID_KEY, json.uuid);
+      return json;
+    })
+    .then(json => {
+      // проверям, есть ли база у проекта
+      return api
+        .projects()
+        .get(json.uuid)
+        .databases()
+        .get('todos')
+        .commit()
+        .catch(err => {
+          // такой базы нет, значит создаём её
+          return api
+            .projects()
+            .get(json.uuid)
+            .databases()
+            .create({
+              name: 'todos',
+              schema_fields: [{
+                  type: 'string',
+                  name: 'text'
+                }, {
+                  type: 'boolean',
+                  name: 'completed',
+                  "default": false
+                }
+              ]
+            })
+            .commit();
+        });
+    })
+    .then(json => {
+      console.log('==>', json);
+      dispatch(fetchAll());
+    });
+  };
+
+};
 
 export function fetchAll () {
   const request = () => {
@@ -23,7 +107,7 @@ export function fetchAll () {
   };
   return (dispatch) => {
     dispatch(request());
-    return fetch(`${PROJECT_URL}/todos`)
+    return fetch(`${getProjectUrl()}/todos`)
       .then(r => r.json())
       .then(json => dispatch(success(json)))
       .catch(error => dispatch(failure(error)));
@@ -61,7 +145,7 @@ export const createTodo = fetchAfter(text => {
 
   return (dispatch) => {
     dispatch(request());
-    return fetch(`${PROJECT_URL}/todos`, {
+    return fetch(`${getProjectUrl()}/todos`, {
         method: 'POST',
         body: JSON.stringify({text})
       })
@@ -91,7 +175,7 @@ export const deleteTodo = fetchAfter(id => {
 
   return (dispatch) => {
     dispatch(request());
-    return fetch(`${PROJECT_URL}/todos/${id}/`, {
+    return fetch(`${getProjectUrl()}/todos/${id}/`, {
         method: 'DELETE',
         mode: 'cors'
       })
@@ -122,7 +206,7 @@ export const completeTodo = fetchAfter((id, completed) => {
 
   return (dispatch) => {
     dispatch(request());
-    return fetch(`${PROJECT_URL}/todos/${id}/`, {
+    return fetch(`${getProjectUrl()}/todos/${id}/`, {
         method: 'PUT',
         mode: 'cors',
         body: JSON.stringify({completed})
@@ -156,7 +240,7 @@ export const editTodo = fetchAfter((id, text) => {
 
   return (dispatch) => {
     dispatch(request());
-    return fetch(`${PROJECT_URL}/todos/${id}/`, {
+    return fetch(`${getProjectUrl()}/todos/${id}/`, {
         method: 'PUT',
         mode: 'cors',
         body: JSON.stringify({text})
