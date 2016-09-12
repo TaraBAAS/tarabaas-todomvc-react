@@ -10,7 +10,9 @@
 ## Получить сборку и отдельно её запустить
 
   `npm run build`
+
   `cd build`
+
   `python -m SimpleHTTPServer`
 
 ## Ещё
