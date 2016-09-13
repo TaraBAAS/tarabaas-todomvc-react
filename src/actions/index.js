@@ -16,7 +16,6 @@ const api = tarabaas.init({
 });
 
 export function init () {
-
   return (dispatch) => {
     dispatch({type: types.INIT});
 
@@ -80,7 +79,6 @@ export function init () {
         });
     })
     .then(json => {
-      console.log('==>', json);
       dispatch(fetchAll());
     });
   };
