@@ -64,7 +64,7 @@ export function init () {
         });
     })
     .then(json => {
-      // dispatch(fetchAll());
+      dispatch(fetchAll());
     });
   };
 
