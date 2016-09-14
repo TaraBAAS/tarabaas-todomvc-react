@@ -2,9 +2,10 @@ import * as tarabaas from 'tarabaas-js';
 import * as types from '../constants/ActionTypes';
 import { LS_PROJECT_ID_KEY, DATABASE_NAME } from '../constants/common';
 
-const api = tarabaas.init({
-  serverURL: 'https://tarabaas.com'
-});
+import getProjectSchema from '../schema/project';
+import getTodosSchema from '../schema/todos';
+
+const api = tarabaas.init();
 
 const getProjectId = () => window.localStorage.getItem(LS_PROJECT_ID_KEY);
 const getProject = () => api.projects().get(getProjectId());
@@ -28,11 +29,10 @@ export function init () {
     })
     .catch(err => {
       // проекта нет, или ошибка, значит создаём его
+      let schema = getProjectSchema();
       return api
         .projects()
-        .create({
-          name: `Todos${Date.now()}`
-        })
+        .create(schema)
         .commit();
     })
     .then(json => {
@@ -46,20 +46,10 @@ export function init () {
         .commit()
         .catch(err => {
           // такой базы нет, значит создаём её
+          let schema = getTodosSchema();
           return getProject()
             .databases()
-            .create({
-              name: DATABASE_NAME,
-              schema_fields: [{
-                  type: 'string',
-                  name: 'text'
-                }, {
-                  type: 'boolean',
-                  name: 'completed',
-                  "default": false
-                }
-              ]
-            })
+            .create(schema)
             .commit();
         });
     })
