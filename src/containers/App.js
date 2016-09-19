@@ -1,11 +1,17 @@
-import React, { Component, PropTypes } from 'react'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import Header from '../components/Header'
-import MainSection from '../components/MainSection'
-import * as TodoActions from '../actions'
+import React, { Component, PropTypes } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import Header from '../components/Header';
+import MainSection from '../components/MainSection';
+import * as TodoActions from '../actions/todos';
 
 class App extends Component {
+  static propTypes = {
+    todos: PropTypes.array.isRequired,
+    actions: PropTypes.object.isRequired,
+    isLoading: PropTypes.bool.isRequired
+  }
+
   componentDidMount() {
     let { init } = this.props.actions;
     init();
@@ -24,14 +30,8 @@ class App extends Component {
   }
 }
 
-App.propTypes = {
-  todos: PropTypes.array.isRequired,
-  actions: PropTypes.object.isRequired,
-  isLoading: PropTypes.bool.isRequired
-}
-
 function mapStateToProps (state) {
-  let {todos} = state;
+  let { todos } = state;
 
   return {
     isLoading: todos.isLoading,

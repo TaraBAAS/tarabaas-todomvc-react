@@ -6,6 +6,10 @@ import loader from './loader.svg';
 import './Header.css';
 
 class Header extends Component {
+  static propTypes = {
+    createTodo: PropTypes.func.isRequired
+  }
+
   handleSave(text) {
     if (text.length !== 0) {
       this.props.createTodo(text)
@@ -32,10 +36,6 @@ class Header extends Component {
       </header>
     )
   }
-}
-
-Header.propTypes = {
-  createTodo: PropTypes.func.isRequired
 }
 
 export default Header

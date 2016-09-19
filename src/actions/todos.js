@@ -1,5 +1,5 @@
 import * as tarabaas from 'tarabaas-js';
-import * as types from '../constants/ActionTypes';
+import * as types from '../constants/TodoActionTypes';
 import { LS_PROJECT_ID_KEY, DATABASE_NAME } from '../constants/common';
 
 import getProjectSchema from '../schema/project';
@@ -78,7 +78,8 @@ export function fetchAll () {
       type: types.FETCH_TODOS_FAILURE
     };
   };
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    console.log('==>', getState())
     dispatch(request());
     return getDB()
       .listItems()

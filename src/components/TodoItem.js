@@ -3,6 +3,13 @@ import classnames from 'classnames'
 import TodoTextInput from './TodoTextInput'
 
 class TodoItem extends Component {
+  static propTypes = {
+    todo: PropTypes.object.isRequired,
+    editTodo: PropTypes.func.isRequired,
+    deleteTodo: PropTypes.func.isRequired,
+    completeTodo: PropTypes.func.isRequired
+  }
+
   constructor(props, context) {
     super(props, context)
     this.state = {
@@ -60,13 +67,6 @@ class TodoItem extends Component {
       </li>
     )
   }
-}
-
-TodoItem.propTypes = {
-  todo: PropTypes.object.isRequired,
-  editTodo: PropTypes.func.isRequired,
-  deleteTodo: PropTypes.func.isRequired,
-  completeTodo: PropTypes.func.isRequired
 }
 
 export default TodoItem
