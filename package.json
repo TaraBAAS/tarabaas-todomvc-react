@@ -1,4 +1,5 @@
 {
+  "homepage": "https://tarabaas.com/examples/todo/",
   "name": "todomvc",
   "version": "0.0.1",
   "private": true,

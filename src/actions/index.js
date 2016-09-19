@@ -1,6 +1,6 @@
 import * as tarabaas from 'tarabaas-js';
 import * as types from '../constants/ActionTypes';
-import { LS_PROJECT_ID_KEY, DATABASE_NAME } from '../constants/common';
+import { LS_PROJECT_ID_KEY, COLLECTION_NAME } from '../constants/common';
 
 import getProjectSchema from '../schema/project';
 import getTodosSchema from '../schema/todos';
@@ -9,7 +9,7 @@ const api = tarabaas.init();
 
 const getProjectId = () => window.localStorage.getItem(LS_PROJECT_ID_KEY);
 const getProject = () => api.projects().get(getProjectId());
-const getDB = () => getProject().databases().get(DATABASE_NAME);
+const getCOL = () => getProject().collections().get(COLLECTION_NAME);
 
 export function init () {
   return (dispatch) => {
@@ -42,13 +42,13 @@ export function init () {
     })
     .then(json => {
       // проверям, есть ли база у проекта
-      return getDB()
+      return getCOL()
         .commit()
         .catch(err => {
           // такой базы нет, значит создаём её
           let schema = getTodosSchema();
           return getProject()
-            .databases()
+            .collections()
             .create(schema)
             .commit();
         });
@@ -80,7 +80,7 @@ export function fetchAll () {
   };
   return (dispatch) => {
     dispatch(request());
-    return getDB()
+    return getCOL()
       .listItems()
       .commit()
       .then(json => dispatch(success(json)))
@@ -120,7 +120,7 @@ export const createTodo = fetchAfter(text => {
   return (dispatch) => {
     dispatch(request());
 
-    return getDB()
+    return getCOL()
       .createItem({text})
       .commit()
       .then(json => dispatch(success(json)))
@@ -148,7 +148,7 @@ export const deleteTodo = fetchAfter(id => {
 
   return (dispatch) => {
     dispatch(request());
-    return getDB()
+    return getCOL()
       .destroyItem(id)
       .commit()
       .then(() => dispatch(success()))
@@ -179,7 +179,7 @@ export const completeTodo = fetchAfter((id, completed) => {
   return (dispatch) => {
     dispatch(request());
 
-    return getDB()
+    return getCOL()
       .updateItem(id, {completed})
       .commit()
       .then(json => dispatch(success(json)))
@@ -210,7 +210,7 @@ export const editTodo = fetchAfter((id, text) => {
 
   return (dispatch) => {
     dispatch(request());
-    return getDB()
+    return getCOL()
       .updateItem(id, {text})
       .commit()
       .then(json => dispatch(success(json)))
